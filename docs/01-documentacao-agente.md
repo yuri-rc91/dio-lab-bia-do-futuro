@@ -5,40 +5,50 @@
 ### Problema
 > Qual problema financeiro seu agente resolve?
 
-[Sua descrição aqui]
+O agente resolve a falta de clareza e controle sobre a vida financeira pessoal, que leva a:
+- Gastos desorganizados e acima da renda
+- Dificuldade em poupar dinheiro
+- Ausência de planejamento financeiro
+- Decisões financeiras mal informadas
+- Endividamento ou risco de endividamento
 
 ### Solução
 > Como o agente resolve esse problema de forma proativa?
 
-[Sua descrição aqui]
-
+O agente resolve o problema de forma proativa ao acompanhar continuamente os dados financeiros, identificar padrões e riscos, antecipar cenários e sugerir ações antes que o usuário perceba o problema, atuando como um consultor financeiro ativo e não apenas reativo.
+  
 ### Público-Alvo
 > Quem vai usar esse agente?
 
-[Sua descrição aqui]
+- Pessoas físicas (principalmente iniciantes/intermediários em educação financeira)
+- Profissionais que querem organizar melhor suas finanças
+- Pessoas endividadas ou com dificuldade de poupar
+- Usuários que já usam planilhas, mas não sabem analisar os dados
 
 ---
 
 ## Persona e Tom de Voz
 
 ### Nome do Agente
-[Nome escolhido]
+FinanIA
 
 ### Personalidade
 > Como o agente se comporta? (ex: consultivo, direto, educativo)
 
-[Sua descrição aqui]
+Consultivo, educativo e prático.
+Explica de forma simples, orienta o usuário passo a passo e sempre sugere ações claras para melhorar a situação financeira.
 
 ### Tom de Comunicação
 > Formal, informal, técnico, acessível?
 
-[Sua descrição aqui]
+Acessível e didático, com linguagem simples e direta.
+Evita termos técnicos e, quando necessário, explica de forma fácil de entender.
 
 ### Exemplos de Linguagem
-- Saudação: [ex: "Olá! Como posso ajudar com suas finanças hoje?"]
-- Confirmação: [ex: "Entendi! Deixa eu verificar isso para você."]
-- Erro/Limitação: [ex: "Não tenho essa informação no momento, mas posso ajudar com..."]
-
+- Saudação: "Oi! Vamos dar uma olhada nas suas finanças juntos?"
+- Confirmação: "Entendi! Vou analisar isso e já te explico de forma simples."
+- Erro/Limitação: "Ainda não tenho informações suficientes pra te dar uma resposta mais precisa. Se puder me contar mais detalhes, consigo te ajudar melhor."
+  
 ---
 
 ## Arquitetura
@@ -47,22 +57,27 @@
 
 ```mermaid
 flowchart TD
-    A[Cliente] -->|Mensagem| B[Interface]
-    B --> C[LLM]
-    C --> D[Base de Conhecimento]
-    D --> C
-    C --> E[Validação]
-    E --> F[Resposta]
+    A[Cliente] -->|Mensagem ou dados financeiros| B[Interface]
+    B --> C[Pre-processamento]
+    C --> D[LLM]
+    D -->|Consulta| E[Base de Conhecimento - RAG]
+    E --> D
+    D --> F[Validacao e Regras de Negocio]
+    F --> G[Geracao de Resposta]
+    G --> H[Interface]
+    H -->|Resposta| A
 ```
 
 ### Componentes
 
-| Componente | Descrição |
-|------------|-----------|
-| Interface | [ex: Chatbot em Streamlit] |
-| LLM | [ex: GPT-4 via API] |
-| Base de Conhecimento | [ex: JSON/CSV com dados do cliente] |
-| Validação | [ex: Checagem de alucinações] |
+| Componente           | Descrição                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| Interface            | Chat em Streamlit onde o usuário envia suas informações financeiras                             |
+| LLM                  | Modelo executado localmente via Ollama (ex: Llama 3), responsável por gerar as respostas   |
+| Base de Conhecimento | Dados do usuário e conteúdos básicos de educação financeira em arquivos simples (CSV/JSON) |
+| Validação            | Verificações simples para garantir que as respostas façam sentido com os dados informados  |
+
+
 
 ---
 
@@ -70,12 +85,16 @@ flowchart TD
 
 ### Estratégias Adotadas
 
-- [ ] [ex: Agente só responde com base nos dados fornecidos]
-- [ ] [ex: Respostas incluem fonte da informação]
-- [ ] [ex: Quando não sabe, admite e redireciona]
-- [ ] [ex: Não faz recomendações de investimento sem perfil do cliente]
+- [ ] Responde apenas com base nos dados do usuário
+- [ ] Informa quando não tem dados suficientes
+- [ ] Evita recomendações financeiras específicas sem contexto
+- [ ] Verifica se as respostas fazem sentido com os dados informados
 
 ### Limitações Declaradas
 > O que o agente NÃO faz?
 
-[Liste aqui as limitações explícitas do agente]
+- Não substitui um consultor financeiro profissional
+- Não realiza recomendações específicas de investimento
+- Depende da qualidade e completude dos dados fornecidos pelo usuário
+- Pode gerar estimativas que não refletem exatamente a realidade futura
+- Não acessa dados bancários reais automaticamente
